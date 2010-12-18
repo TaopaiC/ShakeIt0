@@ -1,4 +1,12 @@
 Punch::Application.routes.draw do
+  root :to => "welcome#index"
+
+  devise_for :users
+
+  resources :rooms
+  resources :contests
+  resources :users
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

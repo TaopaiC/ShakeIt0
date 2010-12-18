@@ -1,0 +1,47 @@
+  <style type="text/css">
+.msg {
+  font-size: 200%;
+}
+#power_bar {
+  width: 100%;
+  height: 30px;
+}
+#power_bar .count {
+  width: 10px;
+  float: left;
+  height: 25px;
+  margin: 2px;
+  background-color: #0F0;
+}
+  </style>
+
+  <div id="power_bar">
+    <div class="count"></div>
+  </div>
+  <div id="status"></div>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
+  <script type="text/javascript" src="javascripts/punch.js"></script>
+
+  <script type="text/javascript">
+var old_x = 0;
+var count = 0;
+var power_grid = 0;
+      $(document).ready(function() {
+          when_punch( function(power, event) {
+            $("body").css("backgroundColor", RGB2HTML(1,power_grid,1));
+            if (power) {
+              count = count + 1;
+              power_grid = power_grid + 11;
+              if (power_grid > 255) { power_grid = 255; }
+              var msg = "[" + count + "] " + RGB2HTML(1,power_grid,1) + "|" + event.accelerationIncludingGravity.x + "," + event.accelerationIncludingGravity.y;
+              $("#power_bar .count").css("width", count / 500 * 100 + "%");
+              $("<div class=\"msg\">" + msg + "</div>").prependTo($("#status"));
+            } else {
+              power_grid = power_grid - 9;
+              if (power_grid < 0) { power_grid = 0; }
+            }
+            old_x = x;
+          } );
+      } );
+  </script>

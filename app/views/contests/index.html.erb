@@ -1,0 +1,13 @@
+<% form_for @room, :url => contests_path do |form| %>
+  <p>
+  <%= form.label :participant_counts %>
+  <%= form.text_field :participant_counts %>
+  </p>
+
+  <%= link_to "Cancel", root_path %>
+  <%= form.submit %>
+<% end %>
+
+<div class="list">
+  <%= render :partial => "room", :collection => @rooms %>
+</div>
