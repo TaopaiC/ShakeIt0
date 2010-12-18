@@ -34,23 +34,23 @@
   <script type="text/javascript">
 var old_x = 0;
 var count = 0;
+var power_grid = 0;
       $(document).ready(function() {
-          window.ondevicemotion = function(event) {
-              var x = event.accelerationIncludingGravity.x;
-              var y = event.accelerationIncludingGravity.y;
-              var z = event.accelerationIncludingGravity.z;
-
-              if (Math.abs(x) > 10 && Math.abs(old_x - x) > 5) {
-                  $("body").css("backgroundColor", "#000");
-                  count = count + 1;
-              var msg = "[" + count + "] " + event.accelerationIncludingGravity.x + "," + event.accelerationIncludingGravity.y;
-                  $("#power_bar .count").css("width", count / 500 * 100 + "%");
+          when_punch( function(power, event) {
+            $("body").css("backgroundColor", RGB2HTML(1,power_grid,1));
+            if (power) {
+              count = count + 1;
+              power_grid = power_grid + 11;
+              if (power_grid > 255) { power_grid = 255; }
+              var msg = "[" + count + "] " + RGB2HTML(1,power_grid,1) + "|" + event.accelerationIncludingGravity.x + "," + event.accelerationIncludingGravity.y;
+              $("#power_bar .count").css("width", count / 500 * 100 + "%");
               $("<div class=\"msg\">" + msg + "</div>").prependTo($("#status"));
-              } else {
-                  $("body").css("backgroundColor", "#FFF");
-              }
-              old_x = x;
-          };
+            } else {
+              power_grid = power_grid - 9;
+              if (power_grid < 0) { power_grid = 0; }
+            }
+            old_x = x;
+          } );
       } );
   </script>
 </body>
