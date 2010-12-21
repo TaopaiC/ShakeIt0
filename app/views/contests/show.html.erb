@@ -1,4 +1,7 @@
   <style type="text/css">
+body {
+  height: 600px;
+}
 .msg {
   font-size: 200%;
 }
@@ -20,13 +23,24 @@
   </div>
   <div id="status"></div>
 
+  <script src="http://js.pusherapp.com/1.6/pusher.min.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
-  <script type="text/javascript" src="javascripts/punch.js"></script>
+  <%= javascript_include_tag "punch" %>
 
   <script type="text/javascript">
-var old_x = 0;
+function giveup() {
+  $.post('<%= giveup_contest_path(@room) %>');
+};
+
+function send_to_server() {
+  $.post('<%= update_score_contest_path(@room) %>', {score : count});
+}
+
+window.onbeforeunload = giveup;
+
 var count = 0;
 var power_grid = 0;
+
       $(document).ready(function() {
           when_punch( function(power, event) {
             $("body").css("backgroundColor", RGB2HTML(1,power_grid,1));
@@ -36,12 +50,16 @@ var power_grid = 0;
               if (power_grid > 255) { power_grid = 255; }
               var msg = "[" + count + "] " + RGB2HTML(1,power_grid,1) + "|" + event.accelerationIncludingGravity.x + "," + event.accelerationIncludingGravity.y;
               $("#power_bar .count").css("width", count / 500 * 100 + "%");
-              $("<div class=\"msg\">" + msg + "</div>").prependTo($("#status"));
+              // $("<div class=\"msg\">" + msg + "</div>").prependTo($("#status"));
             } else {
               power_grid = power_grid - 9;
               if (power_grid < 0) { power_grid = 0; }
             }
             old_x = x;
           } );
+          setInterval(send_to_server, 1000);
       } );
+
+    var pusher = new Pusher('e1790a3cc58751ba4289');
+    var myChannel = pusher.subscribe('<%= dom_id(@room) %>');
   </script>

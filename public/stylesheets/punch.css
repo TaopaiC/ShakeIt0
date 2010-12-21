@@ -1,0 +1,43 @@
+#room {
+  width: 400px;
+  margin: 0 auto;
+}
+
+#room .participants {
+}
+
+#room .participants .user {
+  width: 100%;
+  height: 50px;
+  border-bottom: 2px solid #DDD;
+}
+
+#room .participants .name {
+}
+
+#room .participants .status {
+  width: 100%;
+  height: 25px;
+}
+
+#room .participants .status .count {
+  width: 0%;
+  height: 20px;
+  float: left;
+  padding: 2px;
+  background-color: #0F0;
+}
+
+.list {
+  width: 100%;
+  margin: 20px auto;
+}
+
+.list .entry {
+  width: 100%;
+  text-align: center;
+  padding: 3px;
+  margin-bottom: 10px;
+  background-color: #DCF;
+  border-bottom: 2px solid #33D;
+}

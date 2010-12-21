@@ -4,8 +4,14 @@ Punch::Application.routes.draw do
   devise_for :users
 
   resources :rooms
-  resources :contests
   resources :users
+
+  resources :contests do
+    member do
+      post 'giveup'
+      post 'update_score'
+    end
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

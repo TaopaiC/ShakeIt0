@@ -1,4 +1,78 @@
-<div class="list">
-  <%= render :partial => "participant", :collection => @participants %>
+<div id="room">
+  <ul class="participants">
+  </ul>
 </div>
 
+  <script src="http://js.pusherapp.com/1.6/pusher.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
+  <%= javascript_include_tag "jquery.mustache" %>
+
+<script type="text/x-mustache-template" name="participant">
+<li class="user user_{{user_id}}">
+  <div class="name">{{user_id}}</div>
+  <div class="status"><div class="count">{{score}}</div></div>
+</li>
+</script>
+
+
+  <script type="text/javascript">
+var dd;
+var need_refresh = false;
+
+    function render_participant(pa) {
+      var template = $('script[name="participant"]').html();
+      return $.mustache(template, pa);
+    }
+    function render_room(room) {
+      dd = room;
+      var room_div = $("#room ul");
+      var i = 0, pa_length = room.participants.length, participant;
+      for (i = 0; i < pa_length; i++) {
+        participant = room.participants[i];
+        $(render_participant(participant)).appendTo(room_div);
+      }
+    }
+    function update_score(room) {
+      var room_div = $("#room ul");
+      var i = 0, pa_length = room.participants.length, participant;
+      for (i = 0; i < pa_length; i++) {
+        participant = room.participants[i];
+        $(".user_" + participant.user_id + " .count", room_div).text(participant.score).css("width", "" + (participant.score / 500 * 100) + "%");
+      }
+    }
+
+    function auto_update_score() {
+      $.ajax( {
+        url: '/rooms/<%= @room.id %>.json',
+        success: function(data) {
+          if (need_refresh) {
+            $("#room ul").empty();
+            render_room(data.room);
+            need_refresh = false;
+          } else {
+            update_score(data.room);
+          }
+        }
+      } );
+    }
+    $(document).ready(function() {
+      var pusher = new Pusher('e1790a3cc58751ba4289');
+      var myChannel = pusher.subscribe('<%= dom_id(@room, "dashboard") %>');
+
+      $.ajax( {
+        url: '/rooms/<%= @room.id %>.json',
+        success: function(data) {
+          render_room(data.room);
+          setInterval(auto_update_score, 1000);
+        }
+      } );
+
+      myChannel.bind('participant-create', function(thing) {
+          need_refresh = true;
+      } );
+
+      myChannel.bind('participant-leave', function(thing) {
+          need_refresh = true;
+      } );
+    } );
+  </script>

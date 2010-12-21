@@ -8,7 +8,14 @@ class RoomsController < ApplicationController
   end
 
   def show
-    @participants = @room.participants
+    respond_to do |format|
+      format.json {
+        render :json => @room.to_json(
+          :include => :participants
+        )
+      }
+      format.html
+    end
   end
 
   def new
@@ -18,7 +25,7 @@ class RoomsController < ApplicationController
   def create
     @room = Room.new(params[:room])
     if @room.save
-      redirect_to contest_path(@room)
+      redirect_to room_path(@room)
     else
       render :new
     end
